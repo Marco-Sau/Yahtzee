@@ -1,0 +1,108 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+*.pyo
+*.pyc
+*.pkl
+*.db
+*.sqlite3
+
+# Virtual environment
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.env
+*.venv
+*.virtualenv
+.Python
+*.ipynb_checkpoints
+
+# Distribution / Packaging
+*.egg-info/
+*.egg
+dist/
+build/
+*.wheel
+*.tar.gz
+*.zip
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+*.db-journal
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# macOS Thumbnail cache
+**/._*
+**/.Spotlight-V100
+**/.Trashes
+**/.TemporaryItems
+
+# VSCode settings
+.vscode/
+.history/
+*.code-workspace
+*.vscodeignore
+.settings/
+.vscode-test/
+
+# Coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+.pytest_tmpdir/
+pytestdebug.log
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.sock
+
+# Pylint
+pylint.log
+
+# Test reports
+junit/
+pytest.log
+
+# IDE specific files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*.bak
+*.orig
+*.rej
+*.~*
+
+# Local development artifacts
+*.local
+*.lock
+pip-log.txt
+pip-delete-this-directory.txt
