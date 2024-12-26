@@ -17,7 +17,7 @@ import random
 # - Final Q-value computation
 ############################################################
 class YahtzeeDQN(nn.Module):
-    def __init__(self, state_size, action_size, hidden_size=128):
+    def __init__(self, state_size, action_size, hidden_size=256):
         """
         Initialize DQN with dueling architecture
         Args:
@@ -29,9 +29,6 @@ class YahtzeeDQN(nn.Module):
         
         # Shared feature extraction layers
         # Purpose: Initial processing of state input to extract meaningful features
-        # - First linear layer maps input state to hidden representation
-        # - Second linear layer further processes these features
-        # - Dropout helps prevent overfitting by randomly deactivating neurons
         self.feature_layer = nn.Sequential(
             nn.Linear(state_size, hidden_size),
             nn.ReLU(),
@@ -120,12 +117,12 @@ class YahtzeeAgent:
         self.optimizer = torch.optim.Adam(
             self.qnetwork_local.parameters(), 
             lr=learning_rate,
-            weight_decay=1e-4  # L2 regularization
+            weight_decay=1e-4  # L2 regularization. Meant to prevent overfitting
         )
         
         # Initialize replay memory
         self.memory = ReplayBuffer(action_size, memory_size, batch_size, self.device)
-        self.t_step = 0
+        self.t_step = 0 # Number of steps taken in the environment
     
     ############################
     # EXPERIENCE COLLECTION
@@ -150,10 +147,10 @@ class YahtzeeAgent:
         """
         Select action using epsilon-greedy policy
         """
-        state = torch.FloatTensor(state).unsqueeze(0).to(self.device)
+        state = torch.FloatTensor(state).unsqueeze(0).to(self.device) # Convert state to tensor and add batch dimension
         
         # Evaluate action values
-        self.qnetwork_local.eval()
+        self.qnetwork_local.eval() # The qnetwork_local predicts the action values
         with torch.no_grad():
             action_values = self.qnetwork_local(state)
             
@@ -212,13 +209,15 @@ class YahtzeeAgent:
         states, actions, rewards, next_states, dones = experiences
         
         # Get max predicted Q values for next states
+        # This represents the maximum expected future reward for each action in the next state
+        # Utilizes the Bellman equation
         Q_targets_next = self.qnetwork_target(next_states).detach().max(1)[0].unsqueeze(1)
         
         # Compute Q targets for current states
-        Q_targets = rewards + (self.gamma * Q_targets_next * (1 - dones))
+        Q_targets = rewards + (self.gamma * Q_targets_next * (1 - dones)) # If the episode is over, dones is 1
         
         # Get expected Q values from local model
-        Q_expected = self.qnetwork_local(states).gather(1, actions)
+        Q_expected = self.qnetwork_local(states).gather(1, actions) # Gathers selected action values from the local model in the batch
         
         # Compute loss and perform optimization
         loss = F.mse_loss(Q_expected, Q_targets)

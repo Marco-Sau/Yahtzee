@@ -66,11 +66,11 @@ def get_state_representation(game):
 # 5. Performance monitoring and model saving
 ############################################################
 def train_yahtzee(
-    n_episodes=100000,
-    max_t=1000,
-    eps_start=1.0,
-    eps_end=0.01,
-    eps_decay=0.5
+    n_episodes=100000,  # Number of episodes to train the agent
+    max_t=1000,         # Maximum number of steps per episode
+    eps_start=1.0,      # Initial exploration rate
+    eps_end=0.01,       # Minimum exploration rate
+    eps_decay=0.5       # Rate of exploration decay
 ):
     ############################
     # INITIALIZATION PHASE
@@ -88,7 +88,7 @@ def train_yahtzee(
         batch_size=256,         # Number of experiences to learn from at once
         learning_rate=1e-3,     # How quickly the network adapts
         gamma=0.1,              # Discount factor for future rewards
-        tau=1e-2,              # Soft update parameter for target network
+        tau=1e-2,               # Soft update parameter for target network
         memory_size=200000,     # Size of replay buffer
         update_every=10         # How often to update the network
     )
@@ -99,14 +99,13 @@ def train_yahtzee(
         os.makedirs(save_dir)
     
     # Initialize metrics tracking
-    scores = []
-    scores_window = deque(maxlen=100)
-    eps = eps_start
-    avg_scores = []
-    max_scores = []
-    best_avg_score = -np.inf
-    yahtzee_counts = []
-    
+    scores = []                           # Tracks rewards (scores) per episode
+    scores_window = deque(maxlen=100)     # Rolling window to compute average score
+    eps = eps_start                       # Initialize epsilon for exploration
+    avg_scores = []                       # Tracks moving average of scores
+    max_scores = []                       # Stores highest score per episode
+    best_avg_score = -np.inf              # Tracks the best average score achieved
+        
     # Setup visualization
     plt.ion()
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10))
@@ -123,7 +122,6 @@ def train_yahtzee(
         score = 0
         episode_actions = []
         episode_rewards = []
-        yahtzee_count = 0
         
         ############################
         # EPISODE EXECUTION
@@ -149,10 +147,6 @@ def train_yahtzee(
             reward = game.getLastReward()
             done = game.hasFinished()
             
-            # Track special achievements
-            if action >= 32 and action - 32 == 11 and reward == 50:
-                yahtzee_count += 1
-            
             # Learning step
             agent.step(state, action, reward, next_state, done)
             state = next_state
@@ -166,7 +160,6 @@ def train_yahtzee(
         # METRICS UPDATE PHASE
         # Update tracking metrics and adjust exploration
         ############################
-        yahtzee_counts.append(yahtzee_count)
         scores_window.append(score)
         scores.append(score)
         eps = max(eps_end, eps_decay * eps)
@@ -211,7 +204,6 @@ def train_yahtzee(
             print(f'\nEpisode {i_episode}')
             print(f'Average Score: {current_avg:.2f}')
             print(f'Max Score: {current_max:.2f}')
-            print(f'Average Yahtzees: {np.mean(yahtzee_counts[-100:]):.2f}')
         
         ############################
         # MODEL CHECKPOINTING PHASE
@@ -245,13 +237,13 @@ def train_yahtzee(
         'device': str(agent.device)
     }, final_path)
     
-    return scores, avg_scores, max_scores, yahtzee_counts
+    return scores, avg_scores, max_scores
 
 ############################################################
 # VISUALIZATION
 # Creates and saves final training metrics plots
 ############################################################
-def plot_final_metrics(scores, avg_scores, max_scores, yahtzees):
+def plot_final_metrics(scores, avg_scores, max_scores):
     """
     Create and save final visualization of training metrics
     """
@@ -283,5 +275,5 @@ def plot_final_metrics(scores, avg_scores, max_scores, yahtzees):
 # Entry point of the script
 ############################################################
 if __name__ == "__main__":
-    scores, avg_scores, max_scores, yahtzees = train_yahtzee()
-    plot_final_metrics(scores, avg_scores, max_scores, yahtzees)
+    scores, avg_scores, max_scores = train_yahtzee()
+    plot_final_metrics(scores, avg_scores, max_scores)

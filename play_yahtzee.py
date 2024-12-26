@@ -172,8 +172,8 @@ def update_plot(scores, fig, ax1, window_size=10):
 # analysis, and visualization generation. Runs both single
 # and multiple game scenarios.
 ############################################################
-
-def main():
+n_games = 100
+def main(n_games=n_games):
     """Main execution function that:
     1. Loads the trained model
     2. Plays one detailed game with verbose output
@@ -201,7 +201,7 @@ def main():
     ax1 = plt.gca()
     
     # Play multiple games with live plotting
-    n_games = 100
+    # n_games = 100
     scores = []
     print(f"\nPlaying {n_games} games with live performance plotting...")
     
